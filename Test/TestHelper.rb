@@ -1,3 +1,5 @@
+require 'tempfile'
+
 def default_repository
   GITRepo.repoWithRoot(TEST_REPO)
 end
@@ -20,6 +22,13 @@ class NSString
   def ===(rhs)
     raise ArgumentError, "Must be kind of NSString" unless rhs.kind_of?(NSString)
     self.isEqualToString(rhs) ? true : false
+  end
+  
+  def data
+    file = Tempfile.open(self.object_id.to_s)
+    file.write(self)
+    file.close
+    NSData.dataWithContentsOfFile(file.path)
   end
 end
 

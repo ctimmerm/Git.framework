@@ -1,170 +1,74 @@
-# encoding: utf-8
-
-describe 'GITObjectHash' do
+describe "GITObjectHash" do
   before do
-    @sha1_str = 'bed4001738fa8dad666d669867afaf9f2c2b8c6a'
-    @sha1_data = @sha1_str.dataUsingEncoding(NSUTF8StringEncoding)
-    @pack_str = [@sha1_str].pack('H*')                                  # "¾Ô\x00\x178ú\x8D­fmf\x98g¯¯\x9F,+\x8Cj"
-    @pack_data = @pack_str.dataUsingEncoding(NSISOLatin1StringEncoding) # Apparently we need this encoding to work
-    @hash = GITObjectHash.objectHashWithString(@sha1_str)               #    with the format created by Array#pack
+    @sha1_str = "bed4001738fa8dad666d669867afaf9f2c2b8c6a"
+    @pack_data = [@sha1_str].pack("H*").data
+    @hash = GITObjectHash.alloc.initWithString(@sha1_str)
   end
 
-  describe '+unpackedStringFromString:' do
+  describe "+packedDataFromString:" do
     before do
-      @subj = GITObjectHash.unpackedStringFromString(@pack_str)
+      @subj = GITObjectHash.packedDataFromString(@sha1_str)
     end
 
-    should 'return a NSString' do
-      @subj.should.be.kind_of NSString
-    end
-
-    should 'return a string 40 characters long' do
-      @subj.length.should == GITObjectHashLength
-    end
-
-    should 'return a string matching sha1_str' do
-      @subj.should === @sha1_str
-    end
-  end
-
-  describe '+packedStringFromString:' do
-    before do
-      @subj = GITObjectHash.packedStringFromString(@sha1_str)
-    end
-
-    should 'return a NSString' do
-      @subj.should.be.kind_of NSString
-    end
-
-    should 'return a string 20 characters long' do
-      @subj.length.should == GITObjectHashPackedLength
-    end
-
-    should 'return a string matching pack_str' do
-      @subj.should === @pack_str
-    end
-  end
-
-  describe '+unpackedDataFromData:' do
-    before do
-      @subj = GITObjectHash.unpackedDataFromData(@pack_data)
-    end
-
-    should 'return NSData' do
+    should "return NSData" do
       @subj.should.be.kind_of NSData
     end
 
-    should 'return a string 40 bytes long' do
-      @subj.length.should == GITObjectHashLength
-    end
-
-    should 'return data matching sha1_data' do
-      @subj.should === @sha1_data
-    end
-  end
-
-  describe '+packedDataFromData:' do
-    before do
-      @subj = GITObjectHash.packedDataFromData(@sha1_data)
-    end
-
-    should 'return NSData' do
-      @subj.should.be.kind_of NSData
-    end
-
-    should 'return a string 20 bytes long' do
+    should "return data 20 bytes long" do
       @subj.length.should == GITObjectHashPackedLength
     end
 
-    should 'return data matching pack_data' do
+    should "return data matching sha1_data" do
       @subj.should === @pack_data
     end
   end
 
-  describe '-unpackedString' do
+  describe "+unpackedStringFromData:" do
     before do
-      @subj = @hash.unpackedString
+      @subj = GITObjectHash.unpackedStringFromData(@pack_data)
     end
 
-    should 'return a NSString' do
+    should "return NSString" do
       @subj.should.be.kind_of NSString
     end
 
-    should 'return a string 40 characters long' do
+    should "return a string 40 characters long" do
       @subj.length.should == GITObjectHashLength
     end
 
-    should 'return a string matching sha1_str' do
+    should "return data matching pack_data" do
       @subj.should === @sha1_str
     end
   end
 
-  describe '-packedString' do
-    before do
-      @subj = @hash.packedString
+  describe "-unpackedString" do
+    should "return NSString" do
+      @hash.unpackedString.should.be.kind_of NSString
     end
 
-    should 'return a NSString' do
-      @subj.should.be.kind_of NSString
+    should "return a 40 character long string" do
+      @hash.unpackedString.length.should == GITObjectHashLength
     end
 
-    should 'return a string 20 characters long' do
-      @subj.length.should == GITObjectHashPackedLength
-    end
-
-    should 'return a string matching pack_str' do
-      @subj.should === @pack_str
+    should "return the correct string" do
+      @hash.unpackedString.should == @sha1_str
     end
   end
 
-  describe '-unpackedData' do
-    before do
-      @subj = @hash.unpackedData
+  describe "-packedData" do
+    should "return NSData" do
+      @hash.packedData.should.be.kind_of NSData
     end
 
-    should 'return NSData' do
-      @subj.should.be.kind_of NSData
+    should "return 20 bytes of data" do
+      @hash.packedData.length.should == GITObjectHashPackedLength
     end
 
-    should 'return a string 40 bytes long' do
-      @subj.length.should == GITObjectHashLength
-    end
-
-    should 'return data matching sha1_data' do
-      @subj.should === @sha1_data
+    should "return the correct data" do
+      @hash.packedData.should === @pack_data
     end
   end
 
-  describe '-packedData' do
-    before do
-      @subj = @hash.packedData
-    end
-
-    should 'return NSData' do
-      @subj.should.be.kind_of NSData
-    end
-
-    should 'return a string 20 bytes long' do
-      @subj.length.should == GITObjectHashPackedLength
-    end
-
-    should 'return data matching pack_data' do
-      @subj.should === @pack_data
-    end
-  end
-
-  describe '-hash' do
-    before do
-      @hashValue = @hash.hash
-      @nullValue = 210587549733
-    end
-    should 'be integer' do
-      @hashValue.should.be.kind_of Integer
-    end
-    should 'not be null valued' do
-      @hashValue.should.not == @nullValue
-    end
-  end
   describe "-isEqual:" do
     before do
       @other = GITObjectHash.objectHashWithData(@pack_data)
@@ -173,37 +77,31 @@ describe 'GITObjectHash' do
     should "be true with @hash" do
       @other.isEqual(@hash).should.be.true
     end
+
     should "be true with @sha1_str" do
       @hash.isEqual(@sha1_str).should.be.true
     end
-    should "be true with @sha1_data" do
-      @hash.isEqual(@sha1_data).should.be.true
-    end
-    should "be true with @pack_str" do
-      @hash.isEqual(@pack_str).should.be.true
-    end
+
     should "be true with @pack_data" do
       @hash.isEqual(@pack_data).should.be.true
     end
+
     should "be false with 1" do
       @hash.isEqual(1).should.be.false
     end
+
     should "be false with 'hello'" do
-      @hash.isEqual('hello').should.be.false
+      @hash.isEqual("hello").should.be.false
     end
   end
+
   describe "-isEqualToData:" do
     should "be true with @pack_data" do
       @hash.isEqualToData(@pack_data).should.be.true
     end
-    should "be true with @sha1_data" do
-      @hash.isEqualToData(@sha1_data).should.be.true
-    end
   end
+
   describe "-isEqualToString:" do
-    should "be true with @pack_str" do
-      @hash.isEqualToString(@pack_str).should.be.true
-    end
     should "be true with @sha1_str" do
       @hash.isEqualToString(@sha1_str).should.be.true
     end

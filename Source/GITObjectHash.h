@@ -13,202 +13,39 @@ extern const NSUInteger GITObjectHashLength;
 extern const NSUInteger GITObjectHashPackedLength;
 
 /*!
- * The \c GITObjectHash class provides methods for packing and unpacking SHA1
- * hashes in both NSString and NSData forms. \c GITObjectHash objects provide
- * 
+ * A SHA-1 hash is 160 bits (20 bytes) long. And this is how GIT stores it in pack and index files, as 20 bytes of raw data.
+ * For representation purposes and for the filename of loose objects, the SHA-1 hash is displayed as a 40 character hex string.
+ * The \c GITObjectHash class provides the functionality to go from packed bytes to the unpacked hex string representation
+ * and vice versa.
  */
 @interface GITObjectHash : NSObject {
-    uint32_t raw[5];
+    NSData *data;
 }
 
+@property (retain, getter=packedData) NSData *data;
+
+- (id)initWithData:(NSData *)theData;
+
+- (id)initWithString:(NSString *)aString;
+
+- (id)initWithBytes:(uint8_t *)bytes length:(size_t)length;
+
++ (GITObjectHash *)objectHashWithString:(NSString *)aString;
+
++ (GITObjectHash *)objectHashWithData:(NSData *)theData;
+
 //! \name Packing and Unpacking SHA1 Hashes
-/*!
- * Returns a string containing the unpacked SHA1 of the packed string.
- *
- * \param str NSString containing the packed SHA1
- * \return NSString containing the unpacked SHA1
- * \sa packedStringFromString:
- */
-+ (NSString *)unpackedStringFromString: (NSString *)str;
++ (NSData *)packedDataFromString:(NSString *)aString;
 
-/*!
- * Returns a string containing the packed SHA1 of the unpacked string.
- *
- * \param str NSString containing the unpacked SHA1
- * \return NSString containing the packed SHA1
- * \sa unpackedStringFromString:
- */
-+ (NSString *)packedStringFromString: (NSString *)str;
-
-/*!
- * Returns a string containing the unpacked SHA1 of the packed data.
- *
- * \param data Data containing the packed SHA1
- * \return NSString containing the unpacked SHA1
- */
-+ (NSString *)unpackedStringFromData: (NSData *)data;
-
-/*!
- * Returns a string containing the packed SHA1 of the unpacked data.
- *
- * \param data NSData containing the unpacked SHA1
- * \return NSString containing the packed SHA1
- * \sa unpackedStringFromString:
- */
-+ (NSString *)packedStringFromData: (NSData *)data;
-
-/*!
- * Returns data containing the unpacked SHA1 of the packed string.
- *
- * \param str String containing the packed SHA1
- * \return NSData containing the unpacked SHA1
- */
-+ (NSData *)unpackedDataFromString: (NSString *)str;
-
-/*!
- * Returns data containing the packed SHA1 of the unpacked string.
- *
- * \param str String containing the unpacked SHA1
- * \return NSData containing the packed SHA1
- */
-+ (NSData *)packedDataFromString: (NSString *)str;
-
-/*!
- * Returns an NSData object containing the unpacked SHA1 of the packed data.
- *
- * \param data NSData object containing packed SHA1
- * \return NSData object containing unpacked SHA1
- * \sa packedDataFromData:
- * \sa unpackedDataFromBytes:length:
- */
-+ (NSData *)unpackedDataFromData: (NSData *)data;
-
-/*!
- * Returns an NSData object containing the packed SHA1 of the unpacked data.
- *
- * \param data NSData object containing unpacked SHA1
- * \return NSData object containing packed SHA1
- * \sa unpackedDataFromData:
- * \sa packedDataFromBytes:length:
- */
-+ (NSData *)packedDataFromData: (NSData *)data;
-
-/*!
- * Returns an NSData object containing the unpacked SHA1 of the packed bytes.
- *
- * \param bytes Byte array containing the packed SHA1
- * \param length Size of the byte array
- * \return NSData object containing unpacked SHA1
- * \sa packedDataFromBytes:length:
- */
-+ (NSData *)unpackedDataFromBytes: (uint8_t *)bytes length: (NSUInteger)length;
-
-/*!
- * Returns an NSData object containing the packed SHA1 of the unpacked bytes.
- *
- * \param bytes Byte array containing the unpacked SHA1
- * \param length Size of the byte array
- * \return NSData object containing packed SHA1
- * \sa unpackedDataFromBytes:length:
- */
-+ (NSData *)packedDataFromBytes: (uint8_t *)bytes length: (NSUInteger)length;
-
-//! \name Creating and Initialising Object Hashes
-/*!
- * Creates an autoreleased object hash with an NSData containing a packed or unpacked SHA1.
- *
- * \param hashData NSData containing a packed or unpacked SHA1
- * \return object hash with the NSData object
- * \sa initWithData:
- */
-+ (GITObjectHash *)objectHashWithData: (NSData *)hashData;
-
-/*!
- * Returns an object hash with a string containing a packed or unpacked SHA1.
- *
- * \param hashString String containing a packed or unpacked SHA1
- * \return object hash with the string
- * \sa initWithString:
- */
-+ (GITObjectHash *)objectHashWithString: (NSString *)hashString;
-
-/*!
- * Returns an object hash from the SHA1 Hash of the ￼provided data object.
- *
- * \param objectData Object data to create GITObjectHash of
- * \return object hash of the data object
- * \sa initWithObjectData:
- */
-+ (GITObjectHash *)objectHashWithObjectData: (NSData *)objectData;
-
-/*!
- * Returns an object hash with a string containing a packed or unpacked SHA1.
- *
- * \param str String containing a packed or unpacked SHA1
- * \return object hash with the string
- * \sa initWithData:
- */
-- (id)initWithString: (NSString *)str;
-
-/*!
- * Returns an object hash with an NSData containing ￼a packed or unpacked SHA1.
- *
- * \param data NSData containing a packed or unpacked SHA1
- * \return object hash with the NSData object
- * \sa initWithString:
- */
-- (id)initWithData: (NSData *)data;
-
-/*!
- * Returns an object hash from the SHA1 Hash of the ￼provided data object.
- *
- * \param objectData Object data to create GITObjectHash of
- * \return object hash of the data object
- * \sa initWithString:
- * \sa initWithData:
- */
-- (id)initWithObjectData: (NSData *)objectData;
++ (NSString *)unpackedStringFromData:(NSData *)theData;
 
 //! \name Getting Packed and Unpacked Forms
 /*!
- * Returns the unpacked string of the object hash.
+ * Return a 40 character hex string representing the SHA-1 hash.
  *
- * \return unpacked string of the object hash
- * \sa packedString
- * \sa unpackedData
- * \sa packedData
+ * \return a 40 character hex string representing the SHA-1 hash
  */
 - (NSString *)unpackedString;
-
-/*!
- * Returns the packed string of the object hash.
- *
- * \return packed string of the object hash
- * \sa unpackedString
- * \sa unpackedData
- * \sa packedData
- */
-- (NSString *)packedString;
-
-/*!
- * Returns the unpacked data of the object hash.
- *
- * \return unpacked data of the object hash
- * \sa packedData
- * \sa packedString
- * \sa unpackedString
- */
-- (NSData *)unpackedData;
-
-/*!
- * Returns the packed data of the object hash.
- *
- * \return packed data of the object hash
- * \sa unpackedData
- * \sa packedString
- * \sa unpackedString
- */
-- (NSData *)packedData;
 
 //! \name Testing Equality
 /*!
