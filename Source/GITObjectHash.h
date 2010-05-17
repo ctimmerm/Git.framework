@@ -24,28 +24,63 @@ extern const NSUInteger GITObjectHashPackedLength;
 
 @property (retain, getter=packedData) NSData *data;
 
-- (id)initWithData:(NSData *)theData;
+#pragma mark -
+#pragma mark Initialization
 
-- (id)initWithString:(NSString *)aString;
+- (id)initWithData: (NSData *)theData;
 
-- (id)initWithBytes:(uint8_t *)bytes length:(size_t)length;
+- (id)initWithString: (NSString *)aString;
 
-+ (GITObjectHash *)objectHashWithString:(NSString *)aString;
+- (id)initWithBytes: (uint8_t *)bytes length: (size_t)length;
 
-+ (GITObjectHash *)objectHashWithData:(NSData *)theData;
+/*!
+ * Creates an autoreleased \c GITObjectHash from a 40 character hex string.
+ *
+ * \return An autoreleased \c GITObjectHash
+ * \sa objectHashWithData:
+ */
++ (GITObjectHash *)objectHashWithString: (NSString *)aString;
 
-//! \name Packing and Unpacking SHA1 Hashes
-+ (NSData *)packedDataFromString:(NSString *)aString;
+/*!
+ * Creates an autoreleased \c GITObjectHash from 20 bytes of data.
+ *
+ * \return An autoreleased \c GITObjectHash
+ * \sa objectHashWithString:
+ */
++ (GITObjectHash *)objectHashWithData: (NSData *)theData;
 
-+ (NSString *)unpackedStringFromData:(NSData *)theData;
+#pragma mark -
+#pragma mark Packing and unpacking SHA-1 ashes
+
+//! \name Packing and Unpacking SHA-1 Hashes
+/*!
+ * Packs a 40 character long hex string to 20 bytes of raw data wrapped in an NSData instance.
+ *
+ * \param aString A 40 character hex string that will be packed to 20 bytes in NSData
+ * \return An NSData instance holding a 20 byte SHA-1 hash
+ * \sa unpackedStringFromData:
+ */
++ (NSData *)packedDataFromString: (NSString *)aString;
+
+/*!
+ * Unpacks the bytes from theData to a 40 character long hex string.
+ *
+ * \param theData An NSData instance holding the 20 byte SHA-1 hash
+ * \return The 40 character hex string representation of the SHA-1 hash
+ * \sa packedDataFromString:
+ */
++ (NSString *)unpackedStringFromData: (NSData *)theData;
 
 //! \name Getting Packed and Unpacked Forms
 /*!
- * Return a 40 character hex string representing the SHA-1 hash.
+ * Returns a 40 character hex string representing the SHA-1 hash.
  *
  * \return a 40 character hex string representing the SHA-1 hash
  */
 - (NSString *)unpackedString;
+
+#pragma mark -
+#pragma mark Testing Equality
 
 //! \name Testing Equality
 /*!

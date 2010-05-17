@@ -17,7 +17,10 @@ const NSString *hexChars = @"0123456789abcdef";
 
 @synthesize data;
 
-- (id)initWithData:(NSData *)theData {
+#pragma mark -
+#pragma mark Initialization
+
+- (id)initWithData: (NSData *)theData {
     self = [super init];
     if ( self ) {
         self.data = theData;
@@ -25,7 +28,7 @@ const NSString *hexChars = @"0123456789abcdef";
     return self;
 }
 
-- (id)initWithString:(NSString *)aString {
+- (id)initWithString: (NSString *)aString {
     self = [super init];
     if ( self ) {
         self.data = [[self class] packedDataFromString:aString];
@@ -33,7 +36,7 @@ const NSString *hexChars = @"0123456789abcdef";
     return self;
 }
 
-- (id)initWithBytes:(uint8_t *)bytes length:(size_t)length {
+- (id)initWithBytes: (uint8_t *)bytes length: (size_t)length {
     self = [super init];
     if ( self ) {
         NSData *bytesData = [NSData dataWithBytes:bytes length:length];
@@ -49,24 +52,27 @@ const NSString *hexChars = @"0123456789abcdef";
     return self;
 }
 
-+ (GITObjectHash *)objectHashWithString:(NSString *)aString {
++ (GITObjectHash *)objectHashWithString: (NSString *)aString {
     return [[[self alloc] initWithString:aString] autorelease];
 }
 
-+ (GITObjectHash *)objectHashWithData:(NSData *)theData {
++ (GITObjectHash *)objectHashWithData: (NSData *)theData {
     return [[[self alloc] initWithData:theData] autorelease];
 }
 
+#pragma mark -
+#pragma mark Packing and unpacking SHA-1 ashes
+
 //! \name Packing and Unpacking SHA1 Hashes
-+ (NSData *)packedDataFromString:(NSString *)aString {
++ (NSData *)packedDataFromString: (NSString *)aString {
     NSUInteger length = [aString length];
     if ( length != GITObjectHashLength )
         return nil;
-    
+
     NSUInteger i;
     NSRange range;
     uint8_t raw[GITObjectHashPackedLength];
-    
+
     // In a hex string, each character represents 4 bits.
     // We go through the string 2 characters at a time to form one byte per loop.
     for ( i = 0; i < length; i += 2 ) {
@@ -79,15 +85,15 @@ const NSString *hexChars = @"0123456789abcdef";
     return [NSData dataWithBytes:raw length:GITObjectHashPackedLength];
 }
 
-+ (NSString *)unpackedStringFromData:(NSData *)theData {
++ (NSString *)unpackedStringFromData: (NSData *)theData {
     NSUInteger length = [theData length];
     if ( length != GITObjectHashPackedLength )
         return nil;
-    
+
     NSUInteger i;
     NSMutableString *string = [NSMutableString string];
     const uint8_t *raw = [theData bytes];
-    
+
     // In a hex string, each character represents 4 bits.
     // We go through all bytes and add 2 hex characters for each byte.
     for ( i = 0; i < length; i++ ) {
@@ -104,8 +110,11 @@ const NSString *hexChars = @"0123456789abcdef";
     return [[self class] unpackedStringFromData:data];
 }
 
+#pragma mark -
+#pragma mark Testing Equality
+
 //! \name Testing Equality
-- (BOOL)isEqual:(id)other {
+- (BOOL)isEqual: (id)other {
     if ( !other ) return NO;                            // other is nil
     if ( other == self ) return YES;                    // pointers match?
 
