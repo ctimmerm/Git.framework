@@ -86,12 +86,18 @@ describe "GITObjectHash" do
       @hash.isEqual(@pack_data).should.be.true
     end
 
-    should "be false with 1" do
-      @hash.isEqual(1).should.be.false
-    end
+   should "be false with 1" do
+     @hash.isEqual(1).should.be.false
+   end
 
-    should "be false with 'hello'" do
-      @hash.isEqual("hello").should.be.false
+   should "be false with 'hello'" do
+     @hash.isEqual("hello").should.be.false
+   end
+  end
+
+  describe "-isEqualToObjectHash:" do
+    should "be true with @hash" do
+      GITObjectHash.objectHashWithData(@pack_data).isEqualToObjectHash(@hash).should.be.true
     end
   end
 

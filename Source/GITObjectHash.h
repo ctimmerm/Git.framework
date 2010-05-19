@@ -50,7 +50,7 @@ extern const NSUInteger GITObjectHashPackedLength;
 + (GITObjectHash *)objectHashWithData: (NSData *)theData;
 
 #pragma mark -
-#pragma mark Packing and unpacking SHA-1 ashes
+#pragma mark Packing and unpacking SHA-1 hashes
 
 //! \name Packing and Unpacking SHA-1 Hashes
 /*!
@@ -97,34 +97,34 @@ extern const NSUInteger GITObjectHashPackedLength;
 /*!
  * Returns a Boolean value that indicates whether the receiver and a given data object are equal.
  *
- * \param data The data object with which to compare the receiver
+ * \param theData The data object with which to compare the receiver
  * \return YES if the receiver and data are equal, otherwise NO
  * \sa isEqual:
  * \sa isEqualToString:
  * \sa isEqualToObjectHash:
  */
-- (BOOL)isEqualToData: (NSData *)data;
+- (BOOL)isEqualToData: (NSData *)theData;
 
 /*!
  * Returns a Boolean value that indicates whether the receiver and a given string are equal.
  *
- * \param str The string with which to compare the receiver
+ * \param aString The string with which to compare the receiver
  * \return YES if the receiver and str are equal, otherwise NO
  * \sa isEqual:
  * \sa isEqualToData:
  * \sa isEqualToObjectHash:
  */
-- (BOOL)isEqualToString: (NSString *)str;
+- (BOOL)isEqualToString: (NSString *)aString;
 
 /*!
  * Returns a Boolean value that indicates whether the receiver and a given ObjectHash are equal.
  *
- * \param hash The ObjectHash with which to compare the receiver
+ * \param otherObjectHash The ObjectHash with which to compare the receiver
  * \return YES if the receiver and hash are equal, otherwise NO
  * \sa isEqual:
  * \sa isEqualToData:
  * \sa isEqualToString:
  */
-- (BOOL)isEqualToObjectHash: (GITObjectHash *)hash;
+- (BOOL)isEqualToObjectHash: (GITObjectHash *)otherObjectHash;
 
 @end

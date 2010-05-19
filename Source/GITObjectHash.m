@@ -61,7 +61,7 @@ const NSString *hexChars = @"0123456789abcdef";
 }
 
 #pragma mark -
-#pragma mark Packing and unpacking SHA-1 ashes
+#pragma mark Packing and unpacking SHA-1 hashes
 
 //! \name Packing and Unpacking SHA1 Hashes
 + (NSData *)packedDataFromString: (NSString *)aString {
@@ -91,7 +91,7 @@ const NSString *hexChars = @"0123456789abcdef";
         return nil;
 
     NSUInteger i;
-    NSMutableString *string = [NSMutableString string];
+    NSMutableString *string = [NSMutableString stringWithCapacity:GITObjectHashLength];
     const uint8_t *raw = [theData bytes];
 
     // In a hex string, each character represents 4 bits.
@@ -101,7 +101,7 @@ const NSString *hexChars = @"0123456789abcdef";
         [string appendString:[hexChars substringWithRange:NSMakeRange(*raw & 0x0f, 1)]];
         raw++;
     }
-    return string;
+    return [NSString stringWithString:string];
 }
 
 
@@ -114,6 +114,10 @@ const NSString *hexChars = @"0123456789abcdef";
 #pragma mark Testing Equality
 
 //! \name Testing Equality
+- (NSUInteger)hash {
+    return [data hash];
+}
+
 - (BOOL)isEqual: (id)other {
     if ( !other ) return NO;                            // other is nil
     if ( other == self ) return YES;                    // pointers match?
@@ -133,8 +137,9 @@ const NSString *hexChars = @"0123456789abcdef";
         return NO;
     if ( self == otherObjectHash )
         return YES;
-    if ( [data isEqualToData:otherObjectHash.data] )
+    if ( [self isEqualToData:otherObjectHash.packedData] )
         return YES;
+
     return NO;
 }
 
@@ -149,6 +154,8 @@ const NSString *hexChars = @"0123456789abcdef";
 - (NSString *)description {
     return [self unpackedString];
 }
+
+#pragma mark -
 
 - (void)dealloc {
     self.data = nil;
